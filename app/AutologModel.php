@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Schema;
  * @package App
  * @property $autologTable Имя таблицы в которую записываются логи
  */
-class AutologModel extends Model
+abstract class AutologModel extends Model
 {
     protected static $autologTable;
 

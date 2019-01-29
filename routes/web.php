@@ -14,3 +14,7 @@
 Route::get('/', 'OrdersController@index');
 
 Route::get('/orders/history', 'OrdersController@history');
+
+Route::get('/orders/create', 'OrdersController@create');
+Route::get('/orders/update', 'OrdersController@update');
+Route::get('/orders/delete', 'OrdersController@delete');

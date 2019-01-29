@@ -10,7 +10,13 @@
     <body>
         <h2>Тестовое задание 1</h2>
         <p>
-            Для влючения возможности Автологирования воспользуйтесь классом <strong>\App\AutologModel</strong>
+            Для влючения возможности Автологирования воспользуйтесь классом <strong>\App\AutologModel</strong><br><br>
+            Для проверки можно быстро выполнить действия с заказами:
+            <ul>
+                <li><a target="_blank" href="/orders/create">Создать случайный заказ</a></li>
+                <li><a target="_blank" href="/orders/update">Отредактировать случайный заказ</a></li>
+                <li><a target="_blank" href="/orders/delete">Удалить случайный заказ</a></li>
+            </ul>
         </p>
 
         <h2>Тестовое задание 2</h2>

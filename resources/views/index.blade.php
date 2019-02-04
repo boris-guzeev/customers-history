@@ -13,9 +13,9 @@
             Для влючения возможности Автологирования воспользуйтесь классом <strong>\App\AutologModel</strong><br><br>
             Для проверки можно быстро выполнить действия с заказами:
             <ul>
-                <li><a target="_blank" href="/orders/create">Создать случайный заказ</a></li>
-                <li><a target="_blank" href="/orders/update">Отредактировать случайный заказ</a></li>
-                <li><a target="_blank" href="/orders/delete">Удалить случайный заказ</a></li>
+                <li><a target="_blank" href="/orders/demoCreate">Создать случайный заказ</a></li>
+                <li><a target="_blank" href="/orders/demoUpdate">Отредактировать случайный заказ</a></li>
+                <li><a target="_blank" href="/orders/demoDelete">Удалить случайный заказ</a></li>
             </ul>
         </p>
 
@@ -24,6 +24,7 @@
             Функция <strong>Order::getCustomerHistory()</strong> возвращает историю заказов клиента<br>
             Примеры выполнения:
             <ul>
+                <li><a target="_blank" href="/orders/list">Таблица заказов</a></li>
                 <li><a target="_blank" href="/orders/history?phone=9501112211">Найти заказы где есть телефон 9501112211</a></li>
                 <li><a target="_blank" href="/orders/history?phone=9501112211&inn=1000000001">Найти заказы где есть телефон 9501112211 и ИНН 1000000001</a></li>
             <li><a target="_blank" href="/orders/history?phone=9501112211&inn=1000000001&idsOnly=true">Найти заказы где есть телефон 9501112211 и ИНН 1000000001. Вернуть только id заказа</a></li>

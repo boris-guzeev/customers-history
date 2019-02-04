@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 class Order extends AutologModel
 {
     protected static $autologTable = 'orders_log';
+    protected $guarded = ['id'];
 
     /**
      * Метод ищет все заказы Клиента, исходя из параметров поиска
@@ -42,7 +43,7 @@ class Order extends AutologModel
         return $queryBuilder->get();
     }
 
-    public static function boot() {
+    /*public static function boot() {
         parent::boot();
 
         static::saving(function($instance) {
@@ -62,5 +63,5 @@ class Order extends AutologModel
                 throw new \Exception("Свойство 'client_type' обязательное! В нем должно быть значение: 'физ. лицо' | 'юр. лицо'");
             }
         });
-    }
+    }*/
 }

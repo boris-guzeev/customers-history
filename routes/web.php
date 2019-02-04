@@ -11,10 +11,13 @@
 |
 */
 
-Route::get('/', 'OrdersController@index');
-
 Route::get('/orders/history', 'OrdersController@history');
 
-Route::get('/orders/create', 'OrdersController@create');
-Route::get('/orders/update', 'OrdersController@update');
-Route::get('/orders/delete', 'OrdersController@delete');
+Route::get('/', 'OrdersController@index');
+Route::get('/orders/list', 'OrdersController@list');
+
+Route::get('/orders/demoCreate', 'OrdersController@demoCreate');
+Route::get('/orders/demoUpdate', 'OrdersController@demoUpdate');
+Route::get('/orders/demoDelete', 'OrdersController@demoDelete');
+
+Route::resource('orders', 'OrdersController');

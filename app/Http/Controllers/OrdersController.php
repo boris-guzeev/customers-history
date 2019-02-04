@@ -12,6 +12,12 @@ class OrdersController extends Controller
         return view('index');
     }
 
+    public function list()
+    {
+        $orders = Order::all();
+        return view('orders.index', ['orders' => $orders]);
+    }
+
     public function history(Request $request)
     {
         $phone = $request->input('phone');
@@ -24,7 +30,7 @@ class OrdersController extends Controller
         echo '</pre>';
     }
 
-    public function create()
+    public function demoCreate()
     {
         $pay_type_array = ['нал', 'безнал'];
         $delivery_type_array = ['самовывоз', 'доставка'];
@@ -43,7 +49,7 @@ class OrdersController extends Controller
         if ($order->save()) echo "<script>window.close();</script>";
     }
 
-    public function update()
+    public function demoUpdate()
     {
         $order = Order::where('name', '=', 'Log Test')->get()->random();
         $order->name = 'Log Test Changed';
@@ -51,10 +57,75 @@ class OrdersController extends Controller
         if ($order->save()) echo "<script>window.close();</script>";
     }
 
-    public function delete()
+    public function demoDelete()
     {
         $order = Order::where('name', '=', 'Log Test')->get()->random();
 
         if ($order->delete()) echo "<script>window.close();</script>";
     }
+
+
+
+    public function show(Order $order)
+    {
+        return $order;
+    }
+
+    public function edit($id)
+    {
+        $order = Order::findOrFail($id);
+
+        return view('orders.edit', ['order' => $order]);
+    }
+
+    public function update(Request $request, Order $order)
+    {
+        $request->validate([
+            'client_type' => 'required',
+            'inn' => 'numeric|required_if:client_type,==,юр. лицо',
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'address' => 'required|required_if:delivery_type,==,доставка'
+        ]);
+
+
+        $order->name = request('name');
+        $order->email = request('email');
+        $order->phone = request('phone');
+        $order->phone2 = request('phone2');
+
+        $order->save();
+
+        return redirect('/orders');
+    }
+
+    public function create()
+    {
+        return view('orders.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'client_type' => 'required',
+            'inn' => 'numeric|required_if:client_type,==,юр. лицо',
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'address' => 'required|required_if:delivery_type,==,доставка'
+        ]);
+
+        Order::create(request(['name', 'email', 'phone', 'phone2', 'client_type', 'inn']));
+
+        return redirect('/orders');
+    }
+
+    public function destroy(Order $order)
+    {
+        $order->delete();
+
+        return redirect('/orders/list');
+    }
+
 }

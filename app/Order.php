@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use Illuminate\Support\Facades\DB;
 
 class Order extends AutologModel
@@ -11,36 +12,85 @@ class Order extends AutologModel
     /**
      * Метод ищет все заказы Клиента, исходя из параметров поиска
      *
-     * @param null $phone Поиск заказов, где есть этот телефон. Или в основном или в добавочном
-     * @param null $email Поиск всех заказов с указанным Email
-     * @param null $inn Поиск всех заказов с этим ИНН
-     * @param false $idsOnly Возвращать только $id заказов
+     * @param null $Uphone Поиск заказов, где есть этот телефон. Или в основном или в добавочном
+     * @param null $Uemail Поиск всех заказов с указанным Email
+     * @param null $Uinn Поиск всех заказов с этим ИНН
      *
      * @return mixed
      * @throws \Exception Должен быть задан хотябы один параметр для поиска
      */
-    public static function getCustomerHistory($phone = null, $email = null, $inn = null, $idsOnly = false)
+    public static function getCustomerHistory($Uphone = null, $Uemail = null, $Uinn = null)
     {
-        if (empty($phone) && empty($email) && empty($inn)) {
+        if (empty($Uphone) && empty($Uemail) && empty($Uinn)) {
             throw new \Exception('Не задано ни одного параметра для поиска! Укажите хотябы один из параметров!');
         }
 
-        $queryBuilder = DB::table('orders');
-        if (!empty($phone)) {
-            $queryBuilder->where('phone', $phone);
-            $queryBuilder->orWhere('phone2', $phone);
-        }
-        if (!empty($email)) {
-            $queryBuilder->orWhere('email', $email);
-        }
-        if (!empty($inn)) {
-            $queryBuilder->orWhere('inn', $inn);
+        $customerPhones = [];
+        $customerEmails = [];
+        $customerInns = [];
+
+        function getRelatedOrders(&$customerPhones, &$customerEmails, &$customerInns, $phone = null, $email = null, $inn = null)
+        {
+            $queryBuilder = DB::table('orders');
+            $queryBuilder->select(['phone', 'phone2', 'email', 'inn']);
+
+            if (!empty($phone)) {
+                $queryBuilder->orWhere('phone', $phone);
+                $queryBuilder->orWhere('phone2', $phone);
+            }
+            if (!empty($email)) {
+                $queryBuilder->orWhere('email', $email);
+            }
+            if (!empty($inn)) {
+                $queryBuilder->orWhere('inn', $inn);
+            }
+
+            $results = $queryBuilder->get()->all();
+
+            foreach ($results as $result) {
+                if (!empty($result->phone)) {
+                    if (!isset($customerPhones[$result->phone])) {
+                        $customerPhones[$result->phone] = true;
+                        getRelatedOrders($customerPhones, $customerEmails, $customerInns, $result->phone, null, null);
+                    }
+                }
+
+                if (!empty($result->phone2)) {
+                    if (!isset($customerPhones[$result->phone2])) {
+                        $customerPhones[$result->phone2] = true;
+                        getRelatedOrders($customerPhones, $customerEmails, $customerInns, $result->phone2, null, null);
+                    }
+
+                }
+                if (!empty($result->email)) {
+                    if (!isset($customerEmails[$result->email])) {
+                        $customerEmails[$result->email] = true;
+                        getRelatedOrders($customerPhones, $customerEmails, $customerInns, null, $result->email, null);
+                    }
+
+                }
+                if (!empty($result->inn)) {
+                    if (!isset($customerInns[$result->inn])) {
+                        $customerInns[$result->inn] = true;
+                        getRelatedOrders($customerPhones, $customerEmails, $customerInns, null, null, $result->inn);
+                    }
+
+                }
+            }
+
         }
 
-        if ($idsOnly)
-            $queryBuilder->select('id');
+        getRelatedOrders($customerPhones, $customerEmails, $customerInns, $Uphone, $Uemail, $Uinn);
 
-        return $queryBuilder->get();
+        $resultQueryBuilder = DB::table('orders');
+        $result = $resultQueryBuilder->whereIn('phone', array_keys($customerPhones))
+            ->select('id')
+            ->orWhereIn('phone2', array_keys($customerPhones))
+            ->orWhereIn('email', array_keys($customerEmails))
+            ->orWhereIn('inn', array_keys($customerInns))
+            ->pluck('id');
+
+        return $result;
     }
 
     /*public static function boot() {
